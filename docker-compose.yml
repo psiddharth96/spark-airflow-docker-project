@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  spark-master:
+    container_name: da-spark-master
+    build: ./spark/
+    image: da-spark-image
+    entrypoint: ['./entrypoint.sh', 'master']
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - ./spark/book_data:/opt/spark/data
+      - ./spark/spark_apps:/opt/spark/apps
+      - spark-logs:/opt/spark/spark-events
+    env_file:
+      - ./spark/.env.spark
+    ports:
+      - '9090:8080'
+      - '7077:7077'
+    networks:
+      - my-network
+
+
+  spark-history-server:
+    container_name: da-spark-history
+    image: da-spark-image
+    entrypoint: ['./entrypoint.sh', 'history']
+    depends_on:
+      - spark-master
+    env_file:
+      - ./spark/.env.spark
+    volumes:
+      - spark-logs:/opt/spark/spark-events
+    ports:
+      - '18080:18080'
+    networks:
+      - my-network
+
+  spark-worker:
+  # container_name: da-spark-worker
+    image: da-spark-image
+    entrypoint: ['./entrypoint.sh', 'worker']
+    depends_on:
+      - spark-master
+    env_file:
+      - ./spark/.env.spark
+    volumes:
+      - ./spark/book_data:/opt/spark/data
+      - ./spark/spark_apps:/opt/spark/apps
+      - spark-logs:/opt/spark/spark-events
+    networks:
+      - my-network
+
+  airflow:
+        container_name: airflow-main
+        stdin_open: true
+        tty: true
+        build:
+            dockerfile: ./airflow/dockerfile.01
+        ports:
+            - 8099:8080
+        volumes:
+            - ./airflow/dags:/opt/airflow/dags
+        command: >
+            bash -c "
+            airflow db init &&
+            airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
+            airflow webserver --port 8080 &
+            sleep 30 &&
+            airflow scheduler"
+        networks:
+            - my-network 
+
+  db:
+    image: postgres
+    container_name: rollsync-auth-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./pgdb/integrations.env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./pgdb/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - my-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    container_name: rollsync-auth-pgadmin
+    restart: always
+    ports:
+      - "8888:80"
+    env_file:
+      - ./pgdb/integrations.env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - my-network
+
+volumes:
+  spark-logs:
+  db_data:
+  pgadmin_data:
+    driver: local
+
+networks:
+  my-network:
+    driver: bridge
