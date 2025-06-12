@@ -1,5 +1,6 @@
 FROM ubuntu:22.04 AS spark-base
 
+# Basic Setup
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       sudo \
@@ -20,14 +21,20 @@ RUN apt-get update && \
 ENV SPARK_HOME="/opt/spark"
 ENV HADOOP_HOME="/opt/hadoop"
 
-
+# Setup Spark & Hadoop Home
 RUN mkdir -p ${HADOOP_HOME} && mkdir -p ${SPARK_HOME}
 WORKDIR ${SPARK_HOME}
 
+# Install Spark
 RUN curl -L https://archive.apache.org/dist/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.tgz -o spark.tgz \
     && mkdir -p /opt/spark \
     && tar -xvzf spark.tgz --strip-components=1 -C /opt/spark \
     && rm spark.tgz
+
+# Install Postgresql Jars 
+RUN curl -L -o /opt/spark/jars/postgresql-42.6.0.jar https://jdbc.postgresql.org/download/postgresql-42.6.0.jar
+
+####################
 
 FROM spark-base AS pyspark
 

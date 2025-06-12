@@ -3,7 +3,7 @@ from lib import Utils
 from lib.logger import Log4j
 
 from lib.ConfigLoader import get_config
-from lib.DataLoader import read_accounts_df, read_parties_df, read_party_address_df
+from lib.DataLoader import read_accounts_df, read_parties_df, read_party_address_df, to_dwh
 from lib.Transformations import apply_header, get_contract,get_relations, get_address, join_contract_party, join_party_address, kafka_df, write_test_data_json
 
 if __name__ == '__main__':
@@ -57,4 +57,5 @@ if __name__ == '__main__':
     
     write_test_data_json(spark, kafka_df)
     
-    
+    logger.info("Loading data to dwh...")
+    to_dwh(kafka_df)

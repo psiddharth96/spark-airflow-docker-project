@@ -15,6 +15,7 @@ services:
       - ./spark/book_data:/opt/spark/data
       - ./spark/spark_apps:/opt/spark/apps
       - spark-logs:/opt/spark/spark-events
+      - ./spark/spark_apps:/opt/shared
     env_file:
       - ./spark/.env.spark
     ports:
@@ -51,6 +52,7 @@ services:
       - ./spark/book_data:/opt/spark/data
       - ./spark/spark_apps:/opt/spark/apps
       - spark-logs:/opt/spark/spark-events
+      - ./spark/spark_apps:/opt/shared
     networks:
       - my-network
 
@@ -64,6 +66,7 @@ services:
             - 8099:8080
         volumes:
             - ./airflow/dags:/opt/airflow/dags
+            - ./spark/spark_apps:/opt/shared
         command: >
             bash -c "
             airflow db init &&
