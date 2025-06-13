@@ -1,29 +1,30 @@
-Project Overview
+## Project Overview
 This project is intended to cover basic spark standalone cluster setup workflow in docker containerized setup.
 Anyone with this setup can be able to do simple pocs with most commonly required features of spark, airflow such as Spark Dags, History server, Airflow Dags setup
 You can also add different kinds of data sinks or source such as postgresql database or many more like this.
 One such Data Sink implemented in project is Postgresql
-Steps to start with setup and do simple pocs
-start docker engine
 
-Run docker-compose up --scale spark-worker=3
 
-This will create spark airflow environment with specified spark workers in a standalone cluster setup
-Next step is to login to postgresql db at port 8888
+## Steps to start with setup and do simple pocs
+1. start docker engine
+2. Run docker-compose up --scale spark-worker=3
 
-Enter password and username given in env files
+   * This will create spark airflow environment with specified spark workers in a standalone cluster setup
 
-Check if spark master container and airflow containers are running at ports 9090 and 8099 respectively
+4. Next step is to login to postgresql db at port 8888
 
-If these ports are blocked then set ports accordingly in docker compose
-Check if spark history server is running at port 18080
+   * Enter password and username given in env files
 
-Setup spark connection with name spark [see details below] in airflow connections (airflow user name password is admin)
+5. Check if spark master container and airflow containers are running at ports 9090 and 8099 respectively
 
-Airflow spark connection details - host is spark://spark-master & port will be 7077
+   * If these ports are blocked then set ports accordingly in docker compose
 
-Try running test dag under visible Dags in Airflow.
+6. Check if spark history server is running at port 18080
 
-After done with development - docker-compose down
+7. Setup spark connection with name spark [see details below] in airflow connections (airflow user name password is admin)
 
-New File at / · psiddharth96/spark-airflow-docker-project
+8. Airflow spark connection details - host is spark://spark-master & port will be 7077
+
+9. Try running test dag under visible Dags in Airflow.
+
+10. After done with development - docker-compose down
