@@ -6,7 +6,7 @@ One such Data Sink implemented in project is Postgresql
 
 
 ## Steps to start with setup and do simple pocs
-1. start docker engine
+1. Start docker engine
 2. Run docker-compose up --scale spark-worker=3
 
    * This will create spark airflow environment with specified spark workers in a standalone cluster setup
@@ -28,3 +28,8 @@ One such Data Sink implemented in project is Postgresql
 9. Try running test dag under visible Dags in Airflow.
 
 10. After done with development - docker-compose down
+
+
+## Some considerations going forward
+1. This is spark standalone cluster setup - In this cluster mode spark only allows spark submit in client mode
+2. As spark only allows spark submit in client mode - it needs to be installed on airflow container as well, hence image size is large
