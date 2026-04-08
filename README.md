@@ -4,9 +4,6 @@ Anyone with this setup can be able to do simple pocs with most commonly required
 You can also add different kinds of data sinks or source such as postgresql database or many more like this.
 One such Data Sink implemented in project is Postgresql
 
-![image](https://github.com/user-attachments/assets/695bd0a1-5eca-44f5-963d-a8f2022e325f)
-
-
 ## Steps to start with setup and do simple pocs
 1. Start docker engine
 2. Run docker-compose up --scale spark-worker=3
